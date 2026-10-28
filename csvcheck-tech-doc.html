@@ -549,9 +549,32 @@ footer {
   pre { page-break-inside: avoid; }
   .table-wrap { overflow: visible; }
 }
+
+/* Persistent table of contents and language navigation */
+body { padding-left: 260px; }
+.toc { position: fixed; z-index: 20; left: 0; top: 0; bottom: 0; width: 260px; margin: 0; border-radius: 0; overflow-y: auto; box-shadow: 3px 0 16px rgba(28,31,38,.06); }
+.toc summary { cursor: pointer; font: 700 1rem 'Outfit', sans-serif; color: var(--accent-dark); margin-bottom: .7rem; }
+.toc .language { display: flex; gap: .8rem; margin-bottom: 1rem; font: 700 .85rem 'Outfit', sans-serif; }
+.toc .language a { display: inline; padding: 0; border: 0; color: var(--accent); }
+.toc .language [aria-current] { color: var(--ink); }
+section { scroll-margin-top: 1rem; }
+@media (max-width: 1000px) {
+ body { padding-left: 0; }
+ .toc { bottom: auto; width: min(260px, 85vw); max-height: 80vh; padding: .65rem 1rem; border-radius: 0 0 8px 0; background: var(--bg2); }
+ .toc summary { margin-bottom: 0; }
+ .toc details[open] summary { margin-bottom: .7rem; }
+ .cover { padding-top: 5rem; }
+ section { scroll-margin-top: 4rem; }
+}
+@media print { body { padding-left: 0; } .toc { display: none; } }
+
 </style>
 </head>
 <body>
+<nav class="toc" aria-label="文档导航"><details id="toc-details"><summary>目录 / Menu</summary>
+<div class="language"><a href="index.html" lang="zh-CN" aria-current="page">中文</a><a href="en.html" lang="en">English</a></div>
+<ol><li><a href="#overview">1. 工具概述</a></li><li><a href="#dependencies">2. 依赖与环境</a></li><li><a href="#quickstart">3. 快速开始</a></li><li><a href="#parameters">4. 命令行参数详解</a></li><li><a href="#steps">5. 完整操作步骤</a></li><li><a href="#output">6. 预期输出对照</a></li><li><a href="#exitcode">7. 退出码说明</a></li><li><a href="#troubleshooting">8. 故障排查</a></li><li><a href="#source">9. 源码结构</a></li></ol></details></nav>
+
 
 <!-- ========== HEADER ========== -->
 <header class="cover">
@@ -560,7 +583,7 @@ footer {
     <h1>CSV Check · 技术文档</h1>
     <p class="subtitle">一款零依赖的学生成绩单格式检查工具 — 安全读取 UTF-8 CSV，自动校验表头完整性</p>
     <div class="meta">
-      <span>v1.0.0</span>
+      <span>文档版本 v1.1.0</span>
       <span>Python 3.x · 无第三方依赖</span>
       <span>2026-10-28</span>
     </div>
@@ -568,22 +591,6 @@ footer {
 </header>
 
 <article class="container">
-
-  <!-- ========== TOC ========== -->
-  <nav class="toc">
-    <h2>目录</h2>
-    <ol>
-      <li><a href="#overview">1. 工具概述</a></li>
-      <li><a href="#dependencies">2. 依赖与环境</a></li>
-      <li><a href="#quickstart">3. 快速开始</a></li>
-      <li><a href="#parameters">4. 命令行参数详解</a></li>
-      <li><a href="#steps">5. 完整操作步骤</a></li>
-      <li><a href="#output">6. 预期输出对照</a></li>
-      <li><a href="#exitcode">7. 退出码说明</a></li>
-      <li><a href="#troubleshooting">8. 故障排查</a></li>
-      <li><a href="#source">9. 源码结构</a></li>
-    </ol>
-  </nav>
 
   <!-- ========== 1. 工具概述 ========== -->
   <section id="overview">
@@ -997,10 +1004,18 @@ python --version
 <!-- ========== FOOTER ========== -->
 <footer>
   <div class="container">
-    <p>CSV Check v1.0.0 · Built with Python 3.13 · No third-party dependencies</p>
+    <p>CSV Check · 文档版本 v1.1.0 · Python 3.13 · 无第三方依赖</p>
     <p style="margin-top: 0.3rem; opacity: 0.6;">This tool only reads files. It never writes, never uploads, never phones home.</p>
   </div>
 </footer>
 
+<script>
+const toc = document.getElementById('toc-details');
+const compact = window.matchMedia('(max-width: 1000px)');
+function setTocLayout() { toc.open = !compact.matches; }
+setTocLayout();
+compact.addEventListener('change', setTocLayout);
+toc.querySelectorAll('ol a').forEach(link => link.addEventListener('click', () => { if (compact.matches) toc.open = false; }));
+</script>
 </body>
 </html>
